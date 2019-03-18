@@ -5,7 +5,6 @@ This is a work-in-progress project that uses the files the unc0ver jailbreak dro
 ### TODO
  - Parse ```offsets.plist``` and make it more readable
  - Split code across files
- - Put entire build chain in the ```Makefile``` as soon as I figure out how ```theos``` works
  - Add a summary feature
  - Implement support for reading ```Substrate``` and crash logs
 
