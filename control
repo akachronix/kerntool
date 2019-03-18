@@ -1,10 +1,9 @@
 Package: com.chronix.kerntool
 Name: kerntool
 Depends: 
-Version: 0.0.1
+Version: 0.1
 Architecture: iphoneos-arm
-Description: Reads various files dropped by unc0ver that provide some 
-useful information like the kernel slide.
+Description: Reads various files dropped by unc0ver that provide some useful information like the kernel slide.
 Maintainer: Chronix
 Author: Chronix
 Section: System
