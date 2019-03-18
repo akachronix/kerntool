@@ -28,7 +28,7 @@
 static void version(FILE* stream) {
 
 	fprintf(stdout, "\n");
-	fprintf(stdout, "kerntool v0.1\n");
+	fprintf(stdout, "kerntool v0.2\n");
 	fprintf(stdout, "by chronix\n");
 	fprintf(stdout, "https://github.com/akachronix/kerntool\n");
 	fprintf(stdout, "\n");
@@ -41,6 +41,7 @@ static void help(FILE* stream) {
 	fprintf(stream, "  --offsets      | reads offsets from offsets.plist and spits their contents out to console\n");
 	fprintf(stream, "  --block-domain | enter a domain to block using hosts file\n");
 	fprintf(stream, "  --hosts        | reads from /etc/hosts and spits its contents out to console\n");
+	fprintf(stream, "  --hostname     | gets device name\n");
 	fprintf(stream, "  --uname        | gets kernel and general device information\n");
 	fprintf(stream, "  --version      | get the version of this tool\n");
 	fprintf(stream, "  --help         | spits this helpful screen out\n");
@@ -290,6 +291,27 @@ int main(int argc, const char* argv[]) {
 		free(hosts);
 	}
 
+	else if (strcmp(argv[1], "--hostname") == 0) {
+		
+		// let the whole world know that we're getting hardware info
+		fprintf(stdout, "[*] Getting hardware info\n");
+
+		// create utsname struct
+		struct utsname _utsname;
+
+		// get hardware info and fill the struct and do some error-handling
+		if (uname(&_utsname) == -1) {
+			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
+			return -1;
+		}
+
+		// progress update
+		fprintf(stdout, "[*] Successfully retrieved hardware info\n\n");
+		
+		// spit out info from struct to console
+		fprintf(stdout, "Hostname: %s\n\n", _utsname.nodename);
+	}
+
 	// --uname argument
 	else if (strcmp(argv[1], "--uname") == 0) {
 
@@ -301,7 +323,7 @@ int main(int argc, const char* argv[]) {
 
 		// get hardware info and fill the struct and do some error-handling
 		if (uname(&_utsname) == -1) {
-			fprintf(stderr, "[ERROR] couldn't load uname info\n\n");
+			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
 			return -1;
 		}
 
@@ -309,8 +331,7 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "[*] Successfully retrieved hardware info\n\n");
 		
 		// spit out info from struct to console
-		fprintf(stdout, "%s %s %s %s %s\n\n", 
-			_utsname.nodename,
+		fprintf(stdout, "%s %s %s %s\n\n", 
 			_utsname.sysname,
 			_utsname.release,
 			_utsname.version,
