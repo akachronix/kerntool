@@ -43,8 +43,12 @@ static void help(FILE* stream) {
 	fprintf(stream, "  --hosts        | reads from /etc/hosts and spits its contents out to console\n");
 	fprintf(stream, "  --hostname     | gets device name\n");
 	fprintf(stream, "  --uname        | gets kernel and general device information\n");
+	fprintf(stream, "  --fstab        | reads from /etc/fstab and spits its contents out to console\n");
 	fprintf(stream, "  --version      | get the version of this tool\n");
 	fprintf(stream, "  --help         | spits this helpful screen out\n");
+	fprintf(stream, "  --author       | get information about me ;)\n");
+	fprintf(stream, "  --about        | a little bit of background information about this project\n");
+	fprintf(stream, "  --credits      | a list of the other people that have contributed in some way to this project\n");
 	fprintf(stream, "\n");
 }
 
@@ -339,6 +343,77 @@ int main(int argc, const char* argv[]) {
 		);
 	}
 
+	// --fstab argument
+	else if (strcmp(argv[1], "--fstab") == 0) {
+		// let the world know we're opening a file
+		fprintf(stdout, "[*] Opening \"/etc/fstab\"\n");
+
+		// open /etc/fstab and do some error-handling
+		FILE* fp = fopen("/etc/fstab", "r");
+		if (fp == NULL) {
+			fprintf(stderr, "[ERROR] Could not open \"/etc/fstab\" successfully\n\n");
+			return -1;
+		}
+
+		// progess report
+		fprintf(stdout, "[*] Opened \"/etc/fstab\" successfully\n");
+		fprintf(stdout, "[*] Copying files contents into a string\n");
+
+		// calculate the size of buffer we need and allocate that block of memory
+		size_t fstab_size = sizeof(char) * bytes_in_file(fp) + 1;
+		char* fstab = (char*)malloc(fstab_size);
+
+		// set last character as null
+		fstab[fstab_size] = '\0';
+
+		// create a character buffer and iterator
+		char c;
+		int i = 0;
+
+		// grab data from /etc/hosts character by character
+		while ((c = fgetc(fp)) != EOF) {
+			fstab[i] = c;
+			++i;
+		}
+
+		// progress report
+		fprintf(stdout, "[*] Parsing string\n");
+
+		// get the amount of newlines
+		int fstab_newlines = newlines_in_string(fstab);
+		
+		// create an array of strings with each index referring to a line
+		char* fstab_lines[fstab_newlines];
+
+		// tokenize the string for the first time (getting ready to loop through)
+		fstab_lines[0] = strtok(fstab, "\n");
+		char* token = fstab_lines[0];
+
+		// reset iterator variable
+		i = 0;
+
+		// tokenize the string more
+		while (token != NULL) {
+			token = strtok(NULL, "\n");
+			fstab_lines[i] = token;
+			++i;
+		}
+
+		// output some stuff
+		fprintf(stdout, "[*] Done parsing!\n\n");
+		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
+
+		// finally, output the contents of the file line by line
+		for (i = 0; i < fstab_newlines - 1; ++i) {
+			fprintf(stdout, "%s\n", fstab_lines[i]);
+			getch();
+		}
+
+		// close file and clean up our buffer;
+		fclose(fp);
+		free(fstab);
+	}
+
 	// --version argument
 	else if (strcmp(argv[1], "--version") == 0) {
 		// do nothing as the version string has already been output
@@ -347,6 +422,48 @@ int main(int argc, const char* argv[]) {
 	// --help argument
 	else if (strcmp(argv[1], "--help") == 0) {
 		help(stdout);
+	}
+
+	// --author argument
+	else if (strcmp(argv[1], "--author") == 0) {
+
+		// quick little paragraph, ya know
+		fprintf(stdout, "So as you know, my name is Chronix.\n");
+		fprintf(stdout, "I make music as well as programming so you should check it out.\n");
+		fprintf(stdout, "I'll *carefully* shove my links down here.\n\n");
+		fprintf(stdout, "YouTube: \thttps://www.youtube.com/channel/UCEj2uj_VZYYOa8tIBb63tUg\n");
+		fprintf(stdout, "Spotify: \thttps://open.spotify.com/artist/2mZ7TyrKsCMtAeppYESQQJ\n");
+		fprintf(stdout, "iTunes: \thttps://itunes.apple.com/us/artist/chronix/374153691\n");
+		fprintf(stdout, "Instagram: \thttps://www.instagram.com/akachronix\n");
+		fprintf(stdout, "Snapchat: \thttps://www.snapchat.com/add/aka.chronix\n");
+		fprintf(stdout, "\n");
+	}
+
+	// --about argument
+	else if (strcmp(argv[1], "--about") == 0) {
+		
+		// history about myself, ig
+		fprintf(stdout, "I've been interested in jailbreaking for a while and started during iOS 4.\n");
+		fprintf(stdout, "Back then, I was a kid and had no idea what the fuck I was doing and just installed tweaks willy-nilly.\n");
+		fprintf(stdout, "I became interested in development around the age of 10 and had learned C++ by 13.\n");
+		fprintf(stdout, "I am just now beginning to get into iOS development and this is an extremely easy way to get into it.\n");
+		fprintf(stdout, "As of now, I don't really know what I want to do with my life but I hope that I can do something that I love eventually.\n");
+		fprintf(stdout, "I started this project out of boredom; to test my abilities I guess.\n");
+		fprintf(stdout, "This is heavily inspired by jtool, a project by Jonathan Levin.\n");
+		fprintf(stdout, "Hopefully, I learn some valuable information from working on this project.\n");
+		fprintf(stdout, "Thanks for reading this wall of text. -chronix\n");
+	}
+
+	// --credits argument
+	else if (strcmp(argv[1], "--credits") == 0) {
+
+		// a list of others that have contributed something to this project
+		fprintf(stdout, "chronix  - kerntool\n");
+		fprintf(stdout, "uroboro  - theos\n");
+		fprintf(stdout, "muirey03 - entitlements\n");
+		fprintf(stdout, "pwn20wnd - unc0ver jailbreak\n");
+		fprintf(stdout, "sbingner - unc0ver jailbreak\n");
+		fprintf(stdout, "\n");
 	}
 
 	// undefined argument
