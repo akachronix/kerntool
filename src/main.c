@@ -13,8 +13,9 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "kerntool-util.h"
 #include "kerntool-conio.h"
+#include "kerntool-info.h"
+#include "kerntool-util.h"
 
 #if defined(__APPLE__)
 	#include <mach/mach.h>
@@ -24,33 +25,6 @@
 #if defined(__linux__)
 	#include <sys/utsname.h>
 #endif
-
-static void version(FILE* stream) {
-
-	fprintf(stdout, "\n");
-	fprintf(stdout, "kerntool v0.2\n");
-	fprintf(stdout, "by chronix\n");
-	fprintf(stdout, "https://github.com/akachronix/kerntool\n");
-	fprintf(stdout, "\n");
-}
-
-static void help(FILE* stream) {
-
-	fprintf(stream, "Valid arguments --\n");
-	fprintf(stream, "  --kernel-slide | reads the kernel slide from a file dropped by unc0ver and spits its contents out to console (DO NOT EXPECT THIS TO WORK IF YOU'RE USING ELECTRA!)\n");
-	fprintf(stream, "  --offsets      | reads offsets from offsets.plist and spits their contents out to console\n");
-	fprintf(stream, "  --block-domain | enter a domain to block using hosts file\n");
-	fprintf(stream, "  --hosts        | reads from /etc/hosts and spits its contents out to console\n");
-	fprintf(stream, "  --hostname     | gets device name\n");
-	fprintf(stream, "  --uname        | gets kernel and general device information\n");
-	fprintf(stream, "  --fstab        | reads from /etc/fstab and spits its contents out to console\n");
-	fprintf(stream, "  --version      | get the version of this tool\n");
-	fprintf(stream, "  --help         | spits this helpful screen out\n");
-	fprintf(stream, "  --author       | get information about me ;)\n");
-	fprintf(stream, "  --about        | a little bit of background information about this project\n");
-	fprintf(stream, "  --credits      | a list of the other people that have contributed in some way to this project\n");
-	fprintf(stream, "\n");
-}
 
 int main(int argc, const char* argv[]) {
 
@@ -82,7 +56,7 @@ int main(int argc, const char* argv[]) {
 
 		// calculate the size of buffer we need and allocate that block of memory
 		size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 1;
-		char* kslide = (char*)malloc(kslide_size);
+		char kslide[kslide_size];
 
 		// set last character as null
 		kslide[kslide_size] = '\0';
@@ -103,9 +77,8 @@ int main(int argc, const char* argv[]) {
 		// output the kernel slide
 		fprintf(stdout, "kernel slide: %s\n", kslide);
 
-		// close file and clean up our buffer
+		// close file
 		fclose(fp);
-		free(kslide);
 	}
 
 	// --offsets argument
@@ -127,7 +100,7 @@ int main(int argc, const char* argv[]) {
 
 		// calculate the size of buffer we need and allocate that block of memory
 		size_t offsets_size = sizeof(char) * bytes_in_file(fp) + 1;		
-		char* offsets = (char*)malloc(offsets_size);
+		char offsets[offsets_size];
 		
 		// set last character as null
 		offsets[offsets_size] = '\0';		
@@ -175,9 +148,8 @@ int main(int argc, const char* argv[]) {
 			getch();
 		}
 
-		// close file and clean up our buffer
+		// close file
 		fclose(fp);
-		free(offsets);
 	}
 
 	// --block-domain argument
@@ -242,7 +214,7 @@ int main(int argc, const char* argv[]) {
 
 		// calculate the size of buffer we need and allocate that block of memory
 		size_t hosts_size = sizeof(char) * bytes_in_file(fp) + 1;
-		char* hosts = (char*)malloc(hosts_size);
+		char hosts[hosts_size];
 
 		// set last character as null
 		hosts[hosts_size] = '\0';
@@ -290,9 +262,8 @@ int main(int argc, const char* argv[]) {
 			getch();
 		}
 
-		// close file and clean up our buffer;
+		// close file
 		fclose(fp);
-		free(hosts);
 	}
 
 	else if (strcmp(argv[1], "--hostname") == 0) {
@@ -361,7 +332,7 @@ int main(int argc, const char* argv[]) {
 
 		// calculate the size of buffer we need and allocate that block of memory
 		size_t fstab_size = sizeof(char) * bytes_in_file(fp) + 1;
-		char* fstab = (char*)malloc(fstab_size);
+		char fstab[fstab_size];
 
 		// set last character as null
 		fstab[fstab_size] = '\0';
@@ -409,9 +380,8 @@ int main(int argc, const char* argv[]) {
 			getch();
 		}
 
-		// close file and clean up our buffer;
+		// close file
 		fclose(fp);
-		free(fstab);
 	}
 
 	// --version argument
@@ -468,6 +438,7 @@ int main(int argc, const char* argv[]) {
 
 	// undefined argument
 	else {
+
 		help(stdout);
 		return -1;
 	}

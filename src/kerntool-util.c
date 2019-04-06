@@ -60,13 +60,8 @@ int newlines_in_string(const char* s) {
 
 size_t bytes_in_file(FILE* fp) {
 
-	// seek to end of the file
 	fseek(fp, 0, SEEK_END);
-
-	// grab the position
 	size_t sz = ftell(fp);
-
-	// seek back to the beginning
 	rewind(fp);	
 
 	return sz;
