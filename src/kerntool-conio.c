@@ -10,12 +10,12 @@
 
 #include "kerntool-conio.h"
 
-#include <termios.h>
-#include <unistd.h>
 #include <stdio.h>
+#include <unistd.h>
+#include <termios.h>
 
-int getch(void)
-{
+int getch(void) {
+
     struct termios oldattr, newattr;
     int ch;
     tcgetattr( STDIN_FILENO, &oldattr );
@@ -27,8 +27,8 @@ int getch(void)
     return ch;
 }
 
-int getche(void)
-{
+int getche(void) {
+
     struct termios oldattr, newattr;
     int ch;
     tcgetattr( STDIN_FILENO, &oldattr );

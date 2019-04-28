@@ -30,149 +30,113 @@ int main(int argc, const char* argv[]) {
 
 	version(stdout);
 
-	// check if we have arguments
 	if (argc < 2) {
 
 		help(stdout);
 		return -1;
 	}
 
-	// --kernel-slide argument
 	else if (strcmp(argv[1], "--kernel-slide") == 0) {
 
-		// let the world know we're opening a file
 		fprintf(stdout, "[*] Opening \"/tmp/slide.txt\"\n");
 
-		// open /tmp/slide.txt and do some error-handling
 		FILE* fp = fopen("/tmp/slide.txt", "r");
 		if (fp == NULL) {
 			fprintf(stderr, "[ERROR] Could not open \"/tmp/slide.txt\" successfully\n\n");
 			return -1;
 		}
 
-		// progess report
 		fprintf(stdout, "[*] Opened \"/tmp/slide.txt\" successfully\n");
 		fprintf(stdout, "[*] Copying files contents into a string\n");
 
-		// calculate the size of buffer we need and allocate that block of memory
 		size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 1;
 		char kslide[kslide_size];
 
-		// set last character as null
 		kslide[kslide_size] = '\0';
 
-		// create a character buffer and iterator
 		char c;
 		int i = 0;
 
-		// grab data from /tmp/slide.txt character by character
 		while ((c = fgetc(fp)) != EOF) {
 			kslide[i] = c;
 			++i;
 		}
 
-		// output some stuff
 		fprintf(stdout, "[*] Done parsing!\n\n");
-
-		// output the kernel slide
 		fprintf(stdout, "kernel slide: %s\n", kslide);
 
-		// close file
 		fclose(fp);
 	}
 
-	// --offsets argument
 	else if (strcmp(argv[1], "--offsets") == 0) {
 
-		// let the world know we're opening a file
 		fprintf(stdout, "[*] Opening \"/jb/offsets.plist\"\n");
 
-		// open /jb/offsets.plist and do some error-handling
 		FILE* fp = fopen("/jb/offsets.plist", "r");
 		if (fp == NULL) {
 			fprintf(stderr, "[ERROR] Could not open \"/jb/offsets.plist\" successfully\n\n");
 			return -1;
 		}
 
-		// progess report
 		fprintf(stdout, "[*] Opened \"/jb/offsets.plist\" successfully\n");
 		fprintf(stdout, "[*] Copying files contents into a string\n");
 
-		// calculate the size of buffer we need and allocate that block of memory
 		size_t offsets_size = sizeof(char) * bytes_in_file(fp) + 1;		
 		char offsets[offsets_size];
 		
-		// set last character as null
 		offsets[offsets_size] = '\0';		
 
-		// create a character buffer and iterator
 		char c;
 		int i = 0;
 
-		// grab data from /jb/offsets.plist character by character
 		while ((c = fgetc(fp)) != EOF) {
 			offsets[i] = c;
 			++i;
 		}
 
-		// progress report
 		fprintf(stdout, "[*] Parsing string\n");
 
-		// get the amount of newlines
 		int offsets_newlines = newlines_in_string(offsets);
-		
-		// create an array of strings with each index referring to a line
 		char* offsets_lines[offsets_newlines];
 
-		// tokenize the string for the first time (getting ready to loop through)
 		offsets_lines[0] = strtok(offsets, "\n");
 		char* token = offsets_lines[0];
 
-		// reset iterator variable
 		i = 0;
 
-		// tokenize the string more
 		while (token != NULL) {
 			token = strtok(NULL, "\n");
 			offsets_lines[i] = token;
 			++i;
 		}
 
-		// output some stuff
 		fprintf(stdout, "[*] Done parsing!\n\n");
 		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
 
-		// finally, output the contents of the file line by line
 		for (i = 0; i < offsets_newlines - 1; ++i) {
 			fprintf(stdout, "%s\n", offsets_lines[i]);
 			getch();
 		}
 
-		// close file
 		fclose(fp);
 	}
 
-	// --block-domain argument
 	else if (strcmp(argv[1], "--block-domain") == 0) {
 
-		// open /etc/hosts and do some error-handling
 		FILE* fp = fopen("/etc/hosts", "a+");
 		if (fp == NULL) {
 			fprintf(stderr, "[ERROR] Could not open \"/etc/hosts\" successfully (try running as root, I need write access!)\n\n");
 			return -1;
 		}
 
-		// create a string to hold the domain name
 		char* domain;
 
-		// if the user specified using cli args, copy the arg into the string
 		if (argc > 2) {
 			size_t domain_size = sizeof(char) * strlen(argv[2]) + 1;
 			domain = (char*)malloc(domain_size);
 			memcpy(domain, argv[2], domain_size);
 		}
 		
-		// otherwise, prompt for the domain here
 		else {
 			size_t domain_size = sizeof(char) + 63 + 1;
 			domain = (char*)malloc(domain_size);
@@ -183,129 +147,93 @@ int main(int argc, const char* argv[]) {
 			fprintf(stdout, "\n");
 		}
 
-		// add the entry to the hosts file
 		fprintf(stdout, "[*] Adding entry to block domain \"%s\" to hosts file\n", domain);
 		fprintf(fp, "\n# Added by kerntool\n0 %s\n", domain);
 
-		// we're done
 		fprintf(stdout, "[*] Complete!\n\n");
 
-		// close the file and clean up our buffer
 		fclose(fp);
 		free(domain);
 	}
 
-	// --hosts argument
 	else if (strcmp(argv[1], "--hosts") == 0) {
 		
-		// let the world know we're opening a file
 		fprintf(stdout, "[*] Opening \"/etc/hosts\"\n");
 
-		// open /etc/hosts and do some error-handling
 		FILE* fp = fopen("/etc/hosts", "r");
 		if (fp == NULL) {
 			fprintf(stderr, "[ERROR] Could not open \"/etc/hosts\" successfully\n\n");
 			return -1;
 		}
 
-		// progess report
 		fprintf(stdout, "[*] Opened \"/etc/hosts\" successfully\n");
 		fprintf(stdout, "[*] Copying files contents into a string\n");
 
-		// calculate the size of buffer we need and allocate that block of memory
 		size_t hosts_size = sizeof(char) * bytes_in_file(fp) + 1;
 		char hosts[hosts_size];
 
-		// set last character as null
 		hosts[hosts_size] = '\0';
 
-		// create a character buffer and iterator
 		char c;
 		int i = 0;
 
-		// grab data from /etc/hosts character by character
 		while ((c = fgetc(fp)) != EOF) {
 			hosts[i] = c;
 			++i;
 		}
 
-		// progress report
 		fprintf(stdout, "[*] Parsing string\n");
 
-		// get the amount of newlines
 		int hosts_newlines = newlines_in_string(hosts);
-		
-		// create an array of strings with each index referring to a line
 		char* hosts_lines[hosts_newlines];
 
-		// tokenize the string for the first time (getting ready to loop through)
 		hosts_lines[0] = strtok(hosts, "\n");
 		char* token = hosts_lines[0];
 
-		// reset iterator variable
 		i = 0;
 
-		// tokenize the string more
 		while (token != NULL) {
 			token = strtok(NULL, "\n");
 			hosts_lines[i] = token;
 			++i;
 		}
 
-		// output some stuff
 		fprintf(stdout, "[*] Done parsing!\n\n");
 		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
 
-		// finally, output the contents of the file line by line
 		for (i = 0; i < hosts_newlines - 1; ++i) {
 			fprintf(stdout, "%s\n", hosts_lines[i]);
 			getch();
 		}
 
-		// close file
 		fclose(fp);
 	}
 
 	else if (strcmp(argv[1], "--hostname") == 0) {
 		
-		// let the whole world know that we're getting hardware info
 		fprintf(stdout, "[*] Getting hardware info\n");
 
-		// create utsname struct
 		struct utsname _utsname;
-
-		// get hardware info and fill the struct and do some error-handling
 		if (uname(&_utsname) == -1) {
 			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
 			return -1;
 		}
 
-		// progress update
 		fprintf(stdout, "[*] Successfully retrieved hardware info\n\n");
-		
-		// spit out info from struct to console
 		fprintf(stdout, "Hostname: %s\n\n", _utsname.nodename);
 	}
 
-	// --uname argument
 	else if (strcmp(argv[1], "--uname") == 0) {
 
-		// let the whole world know that we're getting hardware info
 		fprintf(stdout, "[*] Getting hardware info\n");
 
-		// create utsname struct
 		struct utsname _utsname;
-
-		// get hardware info and fill the struct and do some error-handling
 		if (uname(&_utsname) == -1) {
 			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
 			return -1;
 		}
 
-		// progress update
 		fprintf(stdout, "[*] Successfully retrieved hardware info\n\n");
-		
-		// spit out info from struct to console
 		fprintf(stdout, "%s %s %s %s\n\n", 
 			_utsname.sysname,
 			_utsname.release,
@@ -314,90 +242,69 @@ int main(int argc, const char* argv[]) {
 		);
 	}
 
-	// --fstab argument
 	else if (strcmp(argv[1], "--fstab") == 0) {
-		// let the world know we're opening a file
+
 		fprintf(stdout, "[*] Opening \"/etc/fstab\"\n");
 
-		// open /etc/fstab and do some error-handling
 		FILE* fp = fopen("/etc/fstab", "r");
 		if (fp == NULL) {
 			fprintf(stderr, "[ERROR] Could not open \"/etc/fstab\" successfully\n\n");
 			return -1;
 		}
 
-		// progess report
 		fprintf(stdout, "[*] Opened \"/etc/fstab\" successfully\n");
 		fprintf(stdout, "[*] Copying files contents into a string\n");
 
-		// calculate the size of buffer we need and allocate that block of memory
 		size_t fstab_size = sizeof(char) * bytes_in_file(fp) + 1;
 		char fstab[fstab_size];
 
-		// set last character as null
 		fstab[fstab_size] = '\0';
 
-		// create a character buffer and iterator
 		char c;
 		int i = 0;
 
-		// grab data from /etc/hosts character by character
 		while ((c = fgetc(fp)) != EOF) {
 			fstab[i] = c;
 			++i;
 		}
 
-		// progress report
 		fprintf(stdout, "[*] Parsing string\n");
 
-		// get the amount of newlines
 		int fstab_newlines = newlines_in_string(fstab);
-		
-		// create an array of strings with each index referring to a line
 		char* fstab_lines[fstab_newlines];
 
-		// tokenize the string for the first time (getting ready to loop through)
 		fstab_lines[0] = strtok(fstab, "\n");
 		char* token = fstab_lines[0];
 
-		// reset iterator variable
 		i = 0;
 
-		// tokenize the string more
 		while (token != NULL) {
 			token = strtok(NULL, "\n");
 			fstab_lines[i] = token;
 			++i;
 		}
 
-		// output some stuff
 		fprintf(stdout, "[*] Done parsing!\n\n");
 		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
 
-		// finally, output the contents of the file line by line
 		for (i = 0; i < fstab_newlines - 1; ++i) {
 			fprintf(stdout, "%s\n", fstab_lines[i]);
 			getch();
 		}
 
-		// close file
 		fclose(fp);
 	}
 
-	// --version argument
 	else if (strcmp(argv[1], "--version") == 0) {
 		// do nothing as the version string has already been output
 	}
 
-	// --help argument
 	else if (strcmp(argv[1], "--help") == 0) {
 		help(stdout);
 	}
 
-	// --author argument
 	else if (strcmp(argv[1], "--author") == 0) {
 
-		// quick little paragraph, ya know
 		fprintf(stdout, "So as you know, my name is Chronix.\n");
 		fprintf(stdout, "I make music as well as programming so you should check it out.\n");
 		fprintf(stdout, "I'll *carefully* shove my links down here.\n\n");
@@ -409,10 +316,8 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "\n");
 	}
 
-	// --about argument
 	else if (strcmp(argv[1], "--about") == 0) {
 		
-		// history about myself, ig
 		fprintf(stdout, "I've been interested in jailbreaking for a while and started during iOS 4.\n");
 		fprintf(stdout, "Back then, I was a kid and had no idea what the fuck I was doing and just installed tweaks willy-nilly.\n");
 		fprintf(stdout, "I became interested in development around the age of 10 and had learned C++ by 13.\n");
@@ -424,10 +329,8 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "Thanks for reading this wall of text. -chronix\n");
 	}
 
-	// --credits argument
 	else if (strcmp(argv[1], "--credits") == 0) {
 
-		// a list of others that have contributed something to this project
 		fprintf(stdout, "chronix  - kerntool\n");
 		fprintf(stdout, "uroboro  - theos\n");
 		fprintf(stdout, "muirey03 - entitlements\n");
@@ -436,7 +339,6 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "\n");
 	}
 
-	// undefined argument
 	else {
 
 		help(stdout);
