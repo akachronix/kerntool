@@ -11,6 +11,7 @@
 #include "kerntool-util.h"
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 int newlines_in_file(FILE* fp) {
 
@@ -57,4 +58,16 @@ size_t bytes_in_file(FILE* fp) {
 	rewind(fp);	
 
 	return sz;
+}
+
+bool does_file_exist(const char* filename) {
+
+	FILE* fp = fopen(filename, "r");
+	if (fp == NULL) {
+		fclose(fp);
+		return false;
+	}
+
+	fclose(fp);
+	return true;
 }

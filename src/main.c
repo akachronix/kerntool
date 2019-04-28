@@ -30,6 +30,21 @@ int main(int argc, const char* argv[]) {
 
 	version(stdout);
 
+	fprintf(stdout, "[*] Detecting jailbreak\n");
+
+	bool unc0ver = does_file_exist("/.installed_unc0ver");
+	bool electra = does_file_exist("/.bootstrapped_electra");
+
+	if (unc0ver) {
+
+		fprintf(stdout, "[*] Detected unc0ver!\n\n");
+	}
+
+	else if (electra) {
+
+		fprintf(stdout, "[*] Detected Electra!\n\n");
+	}
+
 	if (argc < 2) {
 
 		help(stdout);
@@ -38,93 +53,116 @@ int main(int argc, const char* argv[]) {
 
 	else if (strcmp(argv[1], "--kernel-slide") == 0) {
 
-		fprintf(stdout, "[*] Opening \"/tmp/slide.txt\"\n");
+		if (unc0ver) {
 
-		FILE* fp = fopen("/tmp/slide.txt", "r");
-		if (fp == NULL) {
-			fprintf(stderr, "[ERROR] Could not open \"/tmp/slide.txt\" successfully\n\n");
-			return -1;
+			fprintf(stdout, "[*] Opening \"/tmp/slide.txt\"\n");
+
+			FILE* fp = fopen("/tmp/slide.txt", "r");
+			if (fp == NULL) {
+				
+				fprintf(stderr, "[ERROR] Could not open \"/tmp/slide.txt\" successfully\n\n");
+				return -1;
+			}
+
+			fprintf(stdout, "[*] Opened \"/tmp/slide.txt\" successfully\n");
+			fprintf(stdout, "[*] Copying files contents into a string\n");
+
+			size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 1;
+			char kslide[kslide_size];
+
+			kslide[kslide_size] = '\0';
+
+			char c;
+			int i = 0;
+
+			while ((c = fgetc(fp)) != EOF) {
+
+				kslide[i] = c;
+				++i;
+			}
+
+			fprintf(stdout, "[*] Done parsing!\n\n");
+			fprintf(stdout, "kernel slide: %s\n", kslide);
+
+			fclose(fp);
 		}
 
-		fprintf(stdout, "[*] Opened \"/tmp/slide.txt\" successfully\n");
-		fprintf(stdout, "[*] Copying files contents into a string\n");
+		else if (electra) {
 
-		size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 1;
-		char kslide[kslide_size];
-
-		kslide[kslide_size] = '\0';
-
-		char c;
-		int i = 0;
-
-		while ((c = fgetc(fp)) != EOF) {
-			kslide[i] = c;
-			++i;
+			fprintf(stdout, "[ERROR] This feature does not work on Electra!\n\n");
 		}
-
-		fprintf(stdout, "[*] Done parsing!\n\n");
-		fprintf(stdout, "kernel slide: %s\n", kslide);
-
-		fclose(fp);
 	}
 
 	else if (strcmp(argv[1], "--offsets") == 0) {
 
-		fprintf(stdout, "[*] Opening \"/jb/offsets.plist\"\n");
+		if (unc0ver) {
 
-		FILE* fp = fopen("/jb/offsets.plist", "r");
-		if (fp == NULL) {
-			fprintf(stderr, "[ERROR] Could not open \"/jb/offsets.plist\" successfully\n\n");
-			return -1;
+			fprintf(stdout, "[*] Opening \"/jb/offsets.plist\"\n");
+
+			FILE* fp = fopen("/jb/offsets.plist", "r");
+			if (fp == NULL) {
+
+				fprintf(stderr, "[ERROR] Could not open \"/jb/offsets.plist\" successfully\n\n");
+				return -1;
+			}
+
+			fprintf(stdout, "[*] Opened \"/jb/offsets.plist\" successfully\n");
+			fprintf(stdout, "[*] Copying files contents into a string\n");
+
+			size_t offsets_size = sizeof(char) * bytes_in_file(fp) + 1;		
+			char offsets[offsets_size];
+			
+			offsets[offsets_size] = '\0';		
+
+			char c;
+			int i = 0;
+
+			while ((c = fgetc(fp)) != EOF) {
+
+				offsets[i] = c;
+				++i;
+			}
+
+			fprintf(stdout, "[*] Parsing string\n");
+
+			int offsets_newlines = newlines_in_string(offsets);
+			char* offsets_lines[offsets_newlines];
+
+			offsets_lines[0] = strtok(offsets, "\n");
+			char* token = offsets_lines[0];
+
+			i = 0;
+
+			while (token != NULL) {
+
+				token = strtok(NULL, "\n");
+				offsets_lines[i] = token;
+				++i;
+			}
+
+			fprintf(stdout, "[*] Done parsing!\n\n");
+			fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
+
+			for (i = 0; i < offsets_newlines - 1; ++i) {
+
+				fprintf(stdout, "%s\n", offsets_lines[i]);
+				getch();
+			}
+
+			fclose(fp);
 		}
-
-		fprintf(stdout, "[*] Opened \"/jb/offsets.plist\" successfully\n");
-		fprintf(stdout, "[*] Copying files contents into a string\n");
-
-		size_t offsets_size = sizeof(char) * bytes_in_file(fp) + 1;		
-		char offsets[offsets_size];
 		
-		offsets[offsets_size] = '\0';		
+		else if (electra) {
 
-		char c;
-		int i = 0;
-
-		while ((c = fgetc(fp)) != EOF) {
-			offsets[i] = c;
-			++i;
+			fprintf(stdout, "[ERROR] This feature does not work on Electra!\n\n");
 		}
-
-		fprintf(stdout, "[*] Parsing string\n");
-
-		int offsets_newlines = newlines_in_string(offsets);
-		char* offsets_lines[offsets_newlines];
-
-		offsets_lines[0] = strtok(offsets, "\n");
-		char* token = offsets_lines[0];
-
-		i = 0;
-
-		while (token != NULL) {
-			token = strtok(NULL, "\n");
-			offsets_lines[i] = token;
-			++i;
-		}
-
-		fprintf(stdout, "[*] Done parsing!\n\n");
-		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
-
-		for (i = 0; i < offsets_newlines - 1; ++i) {
-			fprintf(stdout, "%s\n", offsets_lines[i]);
-			getch();
-		}
-
-		fclose(fp);
 	}
 
 	else if (strcmp(argv[1], "--block-domain") == 0) {
 
 		FILE* fp = fopen("/etc/hosts", "a+");
 		if (fp == NULL) {
+
 			fprintf(stderr, "[ERROR] Could not open \"/etc/hosts\" successfully (try running as root, I need write access!)\n\n");
 			return -1;
 		}
@@ -132,12 +170,14 @@ int main(int argc, const char* argv[]) {
 		char* domain;
 
 		if (argc > 2) {
+
 			size_t domain_size = sizeof(char) * strlen(argv[2]) + 1;
 			domain = (char*)malloc(domain_size);
 			memcpy(domain, argv[2], domain_size);
 		}
 		
 		else {
+
 			size_t domain_size = sizeof(char) + 63 + 1;
 			domain = (char*)malloc(domain_size);
 
@@ -162,6 +202,7 @@ int main(int argc, const char* argv[]) {
 
 		FILE* fp = fopen("/etc/hosts", "r");
 		if (fp == NULL) {
+
 			fprintf(stderr, "[ERROR] Could not open \"/etc/hosts\" successfully\n\n");
 			return -1;
 		}
@@ -178,6 +219,7 @@ int main(int argc, const char* argv[]) {
 		int i = 0;
 
 		while ((c = fgetc(fp)) != EOF) {
+
 			hosts[i] = c;
 			++i;
 		}
@@ -193,6 +235,7 @@ int main(int argc, const char* argv[]) {
 		i = 0;
 
 		while (token != NULL) {
+
 			token = strtok(NULL, "\n");
 			hosts_lines[i] = token;
 			++i;
@@ -202,6 +245,7 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
 
 		for (i = 0; i < hosts_newlines - 1; ++i) {
+
 			fprintf(stdout, "%s\n", hosts_lines[i]);
 			getch();
 		}
@@ -215,6 +259,7 @@ int main(int argc, const char* argv[]) {
 
 		struct utsname _utsname;
 		if (uname(&_utsname) == -1) {
+
 			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
 			return -1;
 		}
@@ -229,6 +274,7 @@ int main(int argc, const char* argv[]) {
 
 		struct utsname _utsname;
 		if (uname(&_utsname) == -1) {
+
 			fprintf(stderr, "[ERROR] couldn't load hardware info\n\n");
 			return -1;
 		}
@@ -248,6 +294,7 @@ int main(int argc, const char* argv[]) {
 
 		FILE* fp = fopen("/etc/fstab", "r");
 		if (fp == NULL) {
+
 			fprintf(stderr, "[ERROR] Could not open \"/etc/fstab\" successfully\n\n");
 			return -1;
 		}
@@ -264,6 +311,7 @@ int main(int argc, const char* argv[]) {
 		int i = 0;
 
 		while ((c = fgetc(fp)) != EOF) {
+
 			fstab[i] = c;
 			++i;
 		}
@@ -279,6 +327,7 @@ int main(int argc, const char* argv[]) {
 		i = 0;
 
 		while (token != NULL) {
+
 			token = strtok(NULL, "\n");
 			fstab_lines[i] = token;
 			++i;
@@ -288,6 +337,7 @@ int main(int argc, const char* argv[]) {
 		fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
 
 		for (i = 0; i < fstab_newlines - 1; ++i) {
+
 			fprintf(stdout, "%s\n", fstab_lines[i]);
 			getch();
 		}
@@ -296,10 +346,12 @@ int main(int argc, const char* argv[]) {
 	}
 
 	else if (strcmp(argv[1], "--version") == 0) {
+
 		// do nothing as the version string has already been output
 	}
 
 	else if (strcmp(argv[1], "--help") == 0) {
+
 		help(stdout);
 	}
 
