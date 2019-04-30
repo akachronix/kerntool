@@ -10,6 +10,7 @@
 
 #include "kerntool-util.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -64,7 +65,6 @@ bool does_file_exist(const char* filename) {
 
 	FILE* fp = fopen(filename, "r");
 	if (fp == NULL) {
-		fclose(fp);
 		return false;
 	}
 
