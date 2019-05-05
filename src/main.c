@@ -34,16 +34,19 @@ int main(int argc, const char* argv[]) {
 
 	bool unc0ver = does_file_exist("/.installed_unc0ver");
 	bool electra = does_file_exist("/.bootstrapped_electra");
+	bool chimera = does_file_exist("/chimera/");
 
-	if (unc0ver) {
-
+	if (unc0ver)
 		fprintf(stdout, "[*] Detected unc0ver!\n\n");
-	}
 
-	else if (electra) {
-
+	else if (electra)
 		fprintf(stdout, "[*] Detected Electra!\n\n");
-	}
+	
+	else if (chimera)
+		fprintf(stdout, "[*] Detected Chimera!\n\n");
+	
+	else
+		fprintf(stdout, "[*] No jailbreak detected!\n\n");
 
 	if (argc < 2) {
 
@@ -90,6 +93,11 @@ int main(int argc, const char* argv[]) {
 		else if (electra) {
 
 			fprintf(stdout, "[ERROR] This feature does not work on Electra!\n\n");
+		}
+
+		else if (chimera) {
+
+			fprintf(stdout, "[ERROR] This feature does not work on Chimera!\n\n");
 		}
 	}
 
@@ -155,6 +163,11 @@ int main(int argc, const char* argv[]) {
 		else if (electra) {
 
 			fprintf(stdout, "[ERROR] This feature does not work on Electra!\n\n");
+		}
+
+		else if (chimera) {
+
+			fprintf(stdout, "[ERROR] This feature does not work on Chimera!\n\n");
 		}
 	}
 
@@ -280,12 +293,7 @@ int main(int argc, const char* argv[]) {
 		}
 
 		fprintf(stdout, "[*] Successfully retrieved hardware info\n\n");
-		fprintf(stdout, "%s %s %s %s\n\n", 
-			_utsname.sysname,
-			_utsname.release,
-			_utsname.version,
-			_utsname.machine
-		);
+		fprintf(stdout, "%s %s %s %s\n\n", _utsname.sysname, _utsname.release, _utsname.version, _utsname.machine);
 	}
 
 	else if (strcmp(argv[1], "--fstab") == 0) {

@@ -13,7 +13,7 @@
 void version(FILE* stream) {
 
 	fprintf(stdout, "\n");
-	fprintf(stdout, "kerntool v0.5\n");
+	fprintf(stdout, "kerntool v0.6\n");
 	fprintf(stdout, "by chronix\n");
 	fprintf(stdout, "https://github.com/akachronix/kerntool\n");
 	fprintf(stdout, "\n");
