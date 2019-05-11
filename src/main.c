@@ -101,6 +101,75 @@ int main(int argc, const char* argv[]) {
 		}
 	}
 
+	else if (strcmp(argv[1], "--cydia-log") == 0) {
+
+		bool cydia_installed = does_file_exist("/Applications/Cydia.app");
+
+		if (cydia_installed) {
+
+			fprintf(stdout, "[*] Cydia is installed\n");
+			fprintf(stdout, "[*] Opening \"cydia.log\"\n");
+
+			FILE* fp = fopen("/tmp/cydia.log", "r");
+			if (fp == NULL) {
+
+				fprintf(stderr, "[ERROR] Could not open \"cydia.log\" successfully\n\n");
+				return -1;
+			}
+
+			fprintf(stdout, "[*] Opened \"cydia.log\" successfully\n");
+			fprintf(stdout, "[*] Copying files contents into a string\n");
+
+			size_t cydia_log_size = sizeof(char) * bytes_in_file(fp) + 1;
+			char cydia_log[cydia_log_size];
+
+			cydia_log[cydia_log_size] = '\0';
+
+			char c;
+			int i = 0;
+
+			while ((c = fgetc(fp)) != EOF) {
+
+				cydia_log[i] = c;
+				++i;
+			}
+
+			fprintf(stdout, "[*] Parsing string\n");
+
+			int cydia_log_newlines = newlines_in_string(cydia_log);
+			char* cydia_log_lines[cydia_log_newlines];
+
+			cydia_log_lines[0] = strtok(cydia_log, "\n");
+			char* token = cydia_log_lines[0];
+
+			i = 0;
+
+			while (token != NULL) {
+
+				token = strtok(NULL, "\n");
+				cydia_log_lines[i] = token;
+				++i;
+			}
+
+			fprintf(stdout, "[*] Done parsing!\n\n");
+			fprintf(stdout, "[*] Pressing any key shows the next line in the file\n\n");
+
+			for (i = 0; i < cydia_log_newlines - 1; ++i) {
+
+				fprintf(stdout, "%s\n", cydia_log_lines[i]);
+				getch();
+			}
+
+			fclose(fp);
+		}
+
+		else {
+
+			fprintf(stdout, "[ERROR] Cydia is not installed!\n\n");
+			return -1;
+		}
+	}
+
 	else if (strcmp(argv[1], "--offsets") == 0) {
 
 		if (unc0ver) {

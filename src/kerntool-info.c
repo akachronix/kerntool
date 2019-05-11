@@ -13,7 +13,7 @@
 void version(FILE* stream) {
 
 	fprintf(stdout, "\n");
-	fprintf(stdout, "kerntool v0.6\n");
+	fprintf(stdout, "kerntool v0.7\n");
 	fprintf(stdout, "by chronix\n");
 	fprintf(stdout, "https://github.com/akachronix/kerntool\n");
 	fprintf(stdout, "\n");
@@ -23,6 +23,7 @@ void help(FILE* stream) {
 
 	fprintf(stream, "Valid arguments --\n\n");
 	fprintf(stream, "  --kernel-slide\n\treads the kernel slide from a file dropped by unc0ver and spits its contents out to console (DO NOT EXPECT THIS TO WORK IF YOU'RE USING ELECTRA!)\n\n");
+	fprintf(stream, "  --cydia-log\n\treads from cydia.log and spits the file's contents out to console\n\n");
 	fprintf(stream, "  --offsets\n\treads offsets from offsets.plist and spits their contents out to console\n\n");
 	fprintf(stream, "  --block-domain\n\tenter a domain to block using hosts file\n\n");
 	fprintf(stream, "  --hosts\n\treads from /etc/hosts and spits its contents out to console\n\n");
