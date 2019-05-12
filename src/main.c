@@ -70,7 +70,7 @@ int main(int argc, const char* argv[]) {
 			fprintf(stdout, "[*] Opened \"/tmp/slide.txt\" successfully\n");
 			fprintf(stdout, "[*] Copying files contents into a string\n");
 
-			size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 1;
+			size_t kslide_size = sizeof(char) * bytes_in_file(fp) + 0;
 			char kslide[kslide_size];
 
 			kslide[kslide_size] = '\0';
