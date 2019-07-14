@@ -1,7 +1,7 @@
 Package: com.chronix.kerntool
 Name: kerntool
-Depends: firmware (>= 8.0)
-Version: 0.8
+Depends: firmware (>= 7.0)
+Version: 0.9
 Architecture: iphoneos-arm
 Description: Reads various files dropped by unc0ver that provide some useful information like the kernel slide.
 Maintainer: Chronix
