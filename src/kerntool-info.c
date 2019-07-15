@@ -12,11 +12,11 @@
 
 void version(FILE* stream) {
 
-	fprintf(stdout, "\n");
-	fprintf(stdout, "kerntool v0.9\n");
-	fprintf(stdout, "by chronix\n");
-	fprintf(stdout, "https://github.com/akachronix/kerntool\n");
-	fprintf(stdout, "\n");
+	fprintf(stream, "\n");
+	fprintf(stream, "kerntool v1.0\n");
+	fprintf(stream, "by chronix\n");
+	fprintf(stream, "https://github.com/akachronix/kerntool\n");
+	fprintf(stream, "\n");
 }
 
 void help(FILE* stream) {

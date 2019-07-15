@@ -14,44 +14,37 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void detect_jailbreak(FILE* stream, char* buffer) {
+void detect_jailbreak(FILE* stream, char* jb_buffer) {
 
 	fprintf(stream, "[*] Detecting jailbreak\n");
 
-	bool unc0ver = does_file_exist("/.installed_unc0ver");
-	bool electra = does_file_exist("/.bootstrapped_electra");
-	bool chimera = does_file_exist("/chimera/");
-	bool pangu7 = does_file_exist("/panguaxe");
-
-	if (unc0ver) {
-		
-		sprintf(buffer, "unc0ver");
-		fprintf(stream, "[*] Detected unc0ver!\n\n");
-	}
-
-	else if (electra) {
-		
-		sprintf(buffer, "Electra");
-		fprintf(stream, "[*] Detected Electra!\n\n");
-	}
-
-	else if (chimera) {
-		
-		sprintf(buffer, "Chimera");
-		fprintf(stream, "[*] Detected Chimera!\n\n");
-	}
-
-	else if (pangu7) {
-		
-		sprintf(buffer, "Pangu7");
-		fprintf(stream, "[*] Detected Pangu7!\n\n");
-	}
+	if (does_file_exist("/.installed_home_depot"))
+		sprintf(jb_buffer, "Home Depot / Phoenix");
+	
+	else if (does_file_exist("/untether/expl.js"))
+		sprintf(jb_buffer, "EtasonJB");
+	
+	else if (does_file_exist("/.installed_unc0ver"))
+		sprintf(jb_buffer, "unc0ver");
+	
+	else if (does_file_exist("/.bootstrapped_electra"))
+		sprintf(jb_buffer, "Electra");
+	
+	else if (does_file_exist("/chimera/"))
+		sprintf(jb_buffer, "Chimera");
+	
+	else if (does_file_exist("/panguaxe.installed"))
+		sprintf(jb_buffer, "Pangu7");
 
 	else {
 		
-		sprintf(buffer, "NULL");
+		sprintf(jb_buffer, "NULL");
 		fprintf(stream, "[*] No jailbreak detected! (or your jailbreak hasn't been added for support yet!)\n\n");
+
+		return;
 	}
+
+	fprintf(stream, "[*] Detected %s!\n\n", jb_buffer);
 }
 
 int newlines_in_file(FILE* fp) {

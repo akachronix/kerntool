@@ -23,7 +23,7 @@
 
 int main(int argc, const char* argv[]) {
 
-	char jailbreak[8];
+	char jailbreak[32];
 
 	version(stdout);
 	detect_jailbreak(stdout, jailbreak);
